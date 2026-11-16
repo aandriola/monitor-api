@@ -1,8 +1,11 @@
+import { readFileSync } from 'node:fs';
 import Fastify from 'fastify';
 import { createMetrics } from './metrics.js';
 import { createDeviceRepository } from './devices/device.repository.js';
 import { createDeviceService } from './devices/device.service.js';
 import { registerDeviceRoutes } from './devices/device.routes.js';
+
+const indexHtml = readFileSync(new URL('../public/index.html', import.meta.url), 'utf8');
 
 // Monta o app sem abrir porta: server.js escuta, os testes usam app.inject().
 export function buildApp({ db, config, logger = true }) {
@@ -14,6 +17,8 @@ export function buildApp({ db, config, logger = true }) {
     thresholdSeconds: config.heartbeatThresholdSeconds,
     onHeartbeat: () => metrics.heartbeatsTotal.inc(),
   });
+
+  app.get('/', async (_request, reply) => reply.type('text/html; charset=utf-8').send(indexHtml));
 
   app.get('/health', async () => ({ status: 'ok' }));
 

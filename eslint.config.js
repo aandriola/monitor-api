@@ -10,4 +10,10 @@ export default [
       globals: { process: 'readonly', console: 'readonly' },
     },
   },
+  
+  {
+    files: ['k6/**/*.js'],
+    languageOptions: { globals: { __ENV: 'readonly' } },
+  },
+
 ];
